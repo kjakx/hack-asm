@@ -29,7 +29,7 @@ impl Parser {
         if !self.has_more_commands() {
             panic!("cannot advance because no more commands");
         }
-        while self.current_cmd == "" {
+        while self.current_cmd == "" && self.has_more_commands() {
             let mut line = String::new();
             self.reader.read_line(&mut line);
             self.current_cmd = line.trim().to_string();
