@@ -10,7 +10,7 @@ pub enum CommandType {
 
 pub struct Parser {
     reader: BufReader<File>,
-    current_cmd: String,
+    pub current_cmd: String,
 }
 
 impl Parser {
@@ -29,9 +29,10 @@ impl Parser {
         if !self.has_more_commands() {
             panic!("cannot advance because no more commands");
         }
+        self.current_cmd = String::from("");
         while self.current_cmd == "" && self.has_more_commands() {
             let mut line = String::new();
-            self.reader.read_line(&mut line);
+            self.reader.read_line(&mut line).unwrap();
             self.current_cmd = line.trim().to_string();
         }
     }
