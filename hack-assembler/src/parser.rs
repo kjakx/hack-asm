@@ -3,9 +3,9 @@ use std::fs::File;
 
 #[derive(PartialEq)]
 pub enum CommandType {
-    A_COMMAND,
-    C_COMMAND,
-    L_COMMAND,
+    A,
+    C,
+    L,
 }
 
 pub struct Parser {
@@ -21,46 +21,48 @@ impl Parser {
         }
     }
 
-    pub fn hasMoreCommands(&mut self) -> bool {
+    pub fn has_more_commands(&mut self) -> bool {
         self.reader.fill_buf().map(|b| !b.is_empty()).unwrap()
     }
 
     pub fn advance(&mut self) {
-        if !self.hasMoreCommands() {
+        if !self.has_more_commands() {
             panic!("cannot advance because no more commands");
         }
         while self.current_cmd.trim() == "" {
-            self.reader.read_line(&mut self.current_cmd);
+            let mut line = String::new();
+            self.reader.read_line(&mut line);
+            self.current_cmd = line.trim().to_string();
         }
     }
 
-    pub fn commandType(&self) -> CommandType {
+    pub fn command_type(&self) -> CommandType {
         let cmd_trimmed = self.current_cmd.trim();
         match cmd_trimmed.chars().nth(0).unwrap() {
-            '@' => CommandType::A_COMMAND,
-            '(' => CommandType::L_COMMAND,
-            _ => CommandType::C_COMMAND,
+            '@' => CommandType::A,
+            '(' => CommandType::L,
+            _ => CommandType::C,
         }
     }
 
     pub fn symbol(&self) -> String {
-        match self.commandType() {
-            CommandType::A_COMMAND => {
+        match self.command_type() {
+            CommandType::A => {
                 let x: &[_] = &['@'];
                 self.current_cmd.trim().trim_start_matches(x).to_string()
             },
-            CommandType::L_COMMAND => {
+            CommandType::L => {
                 let x: &[_] = &['(', ')'];
                 self.current_cmd.trim_matches(x).to_string()
             },
-            CommandType::C_COMMAND => {
+            CommandType::C => {
                 panic!("C command has no symbol");
             }
         }
     }
 
     pub fn dest(&self) -> String {
-        if self.commandType() != CommandType::C_COMMAND {
+        if self.command_type() != CommandType::C {
             panic!("no dest in not-C command");
         }
         match self.current_cmd.split_once('=') {
@@ -70,7 +72,7 @@ impl Parser {
     }
 
     pub fn comp(&self) -> String {
-        if self.commandType() != CommandType::C_COMMAND {
+        if self.command_type() != CommandType::C {
             panic!("no comp in not-C command");
         }
         if self.current_cmd.contains("=") {
@@ -83,7 +85,7 @@ impl Parser {
     }
 
     pub fn jump(&self) -> String {
-        if self.commandType() != CommandType::C_COMMAND {
+        if self.command_type() != CommandType::C {
             panic!("no jump in not-C command");
         }
         match self.current_cmd.split_once(';') {
