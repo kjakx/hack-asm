@@ -26,7 +26,7 @@ fn main() -> std::io::Result<()> {
             },
             _ => unimplemented!()
         };
-        println!("{:#018b}", bit_code);
+        println!("{:016b}", bit_code);
     }
     Ok(())
 }
