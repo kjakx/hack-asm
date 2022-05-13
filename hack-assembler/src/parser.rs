@@ -29,7 +29,7 @@ impl Parser {
         if !self.has_more_commands() {
             panic!("cannot advance because no more commands");
         }
-        while self.current_cmd.trim() == "" {
+        while self.current_cmd == "" {
             let mut line = String::new();
             self.reader.read_line(&mut line);
             self.current_cmd = line.trim().to_string();
@@ -37,8 +37,7 @@ impl Parser {
     }
 
     pub fn command_type(&self) -> CommandType {
-        let cmd_trimmed = self.current_cmd.trim();
-        match cmd_trimmed.chars().nth(0).unwrap() {
+        match self.current_cmd.chars().nth(0).unwrap() {
             '@' => CommandType::A,
             '(' => CommandType::L,
             _ => CommandType::C,
@@ -49,7 +48,7 @@ impl Parser {
         match self.command_type() {
             CommandType::A => {
                 let x: &[_] = &['@'];
-                self.current_cmd.trim().trim_start_matches(x).to_string()
+                self.current_cmd.trim_start_matches(x).to_string()
             },
             CommandType::L => {
                 let x: &[_] = &['(', ')'];
