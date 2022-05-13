@@ -42,7 +42,7 @@ pub fn comp(mne: &str) -> u16 {
         "M&A" => 0b1000000,
         "D|A" => 0b0010101,
         "D|M" => 0b1010101,
-        _     => panic!("invalid mnemonic");
+        _     => panic!("invalid mnemonic")
     }
 }
 
