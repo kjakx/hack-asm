@@ -15,7 +15,7 @@ fn main() -> std::io::Result<()> {
     while p.has_more_commands() {
         p.advance();
         let bit_code: u16 = match p.command_type() {
-            parser::CommandType::A | parser::CommandType::L => {
+            parser::CommandType::A => {
                 p.symbol().parse::<u16>().unwrap()
             },
             parser::CommandType::C => {
@@ -23,9 +23,10 @@ fn main() -> std::io::Result<()> {
                 let d = code::dest(&p.dest());
                 let j = code::jump(&p.jump());
                 (0b111 << 13) | (c << 7) | (d << 3) | j
-            }
+            },
+            _ => unimplemented!()
         };
-        println!("{:#b}", bit_code);
+        println!("{:#018b}", bit_code);
     }
     Ok(())
 }
