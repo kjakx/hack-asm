@@ -30,12 +30,17 @@ impl Parser {
             panic!("cannot advance because no more commands");
         }
         self.current_cmd = String::from("");
-        // TODO: skip comment lines
         while self.current_cmd == "" && self.has_more_commands() {
             let mut line = String::new();
             self.reader.read_line(&mut line).unwrap();
-            // TODO: trimming comment part from the line
-            self.current_cmd = line.trim().to_string();
+            self.current_cmd = match line.find("//") {
+                Some(n) => { // cut off the comment part
+                    line[..n].trim().to_string()
+                },
+                None => {
+                    line.trim().to_string()
+                }
+            };
         }
     }
 
