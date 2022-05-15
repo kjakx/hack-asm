@@ -32,10 +32,10 @@ fn main() -> std::io::Result<()> {
                 let j = code::jump(&p.jump());
                 (0b111 << 13) | (c << 6) | (d << 3) | j
             },
-            _ => unimplemented!()
+            parser::CommandType::L => unimplemented!()
         };
         let mut s = String::new();
-        writeln!(&mut s, "{:016b}", bit_code);
+        writeln!(&mut s, "{:016b}", bit_code).unwrap();
         writer.write(s.as_bytes()).unwrap();
     }
     writer.flush().unwrap();

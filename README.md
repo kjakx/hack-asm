@@ -1,2 +1,2 @@
 # hack-asm
-A project for "The elements of Computing Systems" book
+A project for "The Elements of Computing Systems" book
