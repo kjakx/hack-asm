@@ -1,5 +1,6 @@
 use std::io::{BufRead, BufReader};
 use std::fs::File;
+use std::iter::Iterator;
 
 #[derive(PartialEq)]
 pub enum CommandType {
@@ -9,38 +10,46 @@ pub enum CommandType {
 }
 
 pub struct Parser {
-    reader: BufReader<File>,
+    commands: Vec<String>,
     pub current_cmd: String,
 }
 
 impl Parser {
     pub fn new(f: File) -> Self {
+        let reader = BufReader::new(f);
+        let commands: Vec<String> = reader.lines().map(|line| {
+            let line = line.unwrap();
+            let l = line.as_str();
+            match l.find("//") {
+                Some(n) => { // cut off the comment part
+                    l[..n].trim().to_string()
+                },
+                None => {
+                    l.trim().to_string()
+                }
+            }
+        })
+        .filter(|l| *l != "")
+        .collect();
+
+        let commands_rev: Vec<String> = commands.into_iter().rev().collect();
+
         Parser {
-            reader: BufReader::new(f),
+            commands: commands_rev,
             current_cmd: String::new(),
         }
     }
 
     pub fn has_more_commands(&mut self) -> bool {
-        self.reader.fill_buf().map(|b| !b.is_empty()).unwrap()
+        self.commands.len() > 0
     }
 
     pub fn advance(&mut self) {
         if !self.has_more_commands() {
             panic!("cannot advance because no more commands");
         }
-        self.current_cmd = String::from("");
-        while self.current_cmd == "" && self.has_more_commands() {
-            let mut line = String::new();
-            self.reader.read_line(&mut line).unwrap();
-            self.current_cmd = match line.find("//") {
-                Some(n) => { // cut off the comment part
-                    line[..n].trim().to_string()
-                },
-                None => {
-                    line.trim().to_string()
-                }
-            };
+        if self.has_more_commands() {
+            self.current_cmd = self.commands.pop().unwrap();
         }
     }
 
