@@ -8,7 +8,7 @@ pub fn dest(mne: &str) -> u16 {
         "AM"  => 0b101,
         "AD"  => 0b110,
         "AMD" => 0b111,
-        _     => panic!("invalid mnemonic")
+        _     => panic!("invalid mnemonic: {}", mne)
     }
 }
 
@@ -42,7 +42,7 @@ pub fn comp(mne: &str) -> u16 {
         "D&M" => 0b1000000,
         "D|A" => 0b0010101,
         "D|M" => 0b1010101,
-        _     => panic!("invalid mnemonic")
+        _     => panic!("invalid mnemonic: {}", mne)
     }
 }
 
@@ -56,6 +56,6 @@ pub fn jump(mne: &str) -> u16 {
         "JNE" => 0b101,
         "JLE" => 0b110,
         "JMP" => 0b111,
-        _     => panic!("invalid mnemonic")
+        _     => panic!("invalid mnemonic: {}", mne)
     }
 }
